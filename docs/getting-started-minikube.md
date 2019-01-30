@@ -1,28 +1,30 @@
-# Getting started with minikube
+# Getting started with Minikube
 
-### Overview
+## Overview
 
-A hands on introduction to Kubernetes covering concepts that are beneficial for working with the RE managed kubernetes platform.
+A hands on introduction to the fundamental [Kubernetes concepts](https://kubernetes.io/docs/concepts/) that underpin the GDS Supported Platform.
 
-This exercise will take between 30-60mins and will cover:
+This exercise will take between 30-60 minutes and will cover:
 
-* How to setup minikube for a local kubernetes cluster.
+* How to setup [Minikube](https://github.com/kubernetes/minikube) for a local [Kubernetes](https://kubernetes.io/) cluster.
 * Describing a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) to run multiple instances of Pods for a hello world app
 * Describing a [Service](https://kubernetes.io/docs/concepts/services-networking/service/) to route traffic to Pods inside the cluster
 * Describing an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) to route traffic to a Service from outside the cluster
 * Introduction to defining a [Helm chart](https://docs.helm.sh/developing_charts/) to package up all of the above
 
-### Exercise
+## Exercise
 
-* Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple hello world application based on nginx that can be deployed to a kubernetes cluster.
+Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple hello world application based on nginx that can be deployed to a Kubernetes cluster.
 
-install [homebrew](https://brew.sh/) (if required) to install dependencies
+### Set up a local Kubernetes cluster using Minikube
+
+Install [Homebrew](https://brew.sh/) (if required) to install dependencies.
 
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-install minikube and dependencies using [homebrew](https://brew.sh/)
+Install Minikube and dependencies using [Homebrew](https://brew.sh/)
 
 ```
 brew cask install virtualbox  # if it fails, go to system preferences > security and allow Oracle access at the bottom
@@ -32,7 +34,7 @@ brew install kubernetes-helm
 brew install jq
 ```
 
-start minikube with an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller
+Start Minikube with an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller
 
 ```
 minikube start --vm-driver virtualbox
@@ -40,29 +42,30 @@ minikube addons enable ingress
 minikube addons list
 ```
 
-check minikube is running
+Check Minikube is running
 
 ```
 minikube status
 ```
 
-check that we can access our minikube cluster using `kubectl`
+Check that we can access our Minikube cluster using `kubectl`
 
 ```
 kubectl get nodes
 ```
 
-check out minikube using the kubernetes web dashboard
+Check out Minikube using the Kubernetes web dashboard
 
 ```
 minikube dashboard  --url     # get the web address of the dashboard
 minikube dashboard            # launch dashboad in default browser
 ```
 
-![](https://i.imgur.com/Ujw9EFh.png)
+![A screenshot of the Kubernetes dashboard](kubernetes-dashboard.png)
 
+### Creating an initial deployment
 
-create a directory that will contain our "Chart" (collection of kubernetes resources)
+Create a directory that will contain our "Chart" (a collection of Kubernetes resources)
 
 ```
 mkdir myapp
@@ -88,13 +91,13 @@ name: myapp
 version: 0.1.0
 ```
 
-create a "templates" directory which will contain all of our kubernetes object definitions
+Create a "templates" directory which will contain all of our Kubernetes object definitions
 
 ```
 mkdir templates
 ```
 
-create an values.yaml file that can be used to set defaults for any variables we might use in our chart containing
+Create an values.yaml file that can be used to set defaults for any variables we might use in our chart containing
 
 ```
 replicas: 2 	# the number of pods
@@ -102,7 +105,7 @@ replicas: 2 	# the number of pods
 
 This sets the default number of pods to create and is referenced in the deployment template using ``{{ .Values.replicas }}``.
 
-ok, we now have the boilerplate for an empty "Chart" and can start defining kubernetes resources
+ok, we now have the boilerplate for an empty "Chart" and can start defining Kubernetes resources
 
 First we will create a Deployment which will ensure than N replicas (instances) of our application container will be running. In this case the default is 2 as defined in `values.yaml` however this may be overridden.
 
@@ -148,7 +151,7 @@ Test out rendering the chart using the `helm template` command like:
 helm template --name example .
 ```
 
-you should see the rendered version of the kubernetes objects dumped to stdout
+you should see the rendered version of the Kubernetes objects dumped to stdout
 
 instead of dumping to stdout, we can write the output to a directory:
 
@@ -157,7 +160,7 @@ mkdir output
 helm template --name example --output-dir=output .
 ```
 
-we can now use `kubectl` to "apply" the contents of the "output" dir to our minikube cluster
+we can now use `kubectl` to "apply" the contents of the "output" dir to our Minikube cluster
 
 ```
 kubectl apply -R -f output/
@@ -165,7 +168,7 @@ kubectl apply -R -f output/
 
 `apply` means, install the declarations into the cluster
 
-The `-R` flag means, find all the kubernetes resource definitions recursively in the directory specified by the `-f` flag
+The `-R` flag means, find all the Kubernetes resource definitions recursively in the directory specified by the `-f` flag
 
 We should now be able to list the deployments installed in the cluster with:
 
@@ -182,7 +185,7 @@ kubectl get pods
 ```
 
 
-which should show something like
+Which should show something like
 
 ```
 NAME                                   READY   STATUS           RESTARTS   AGE
@@ -200,13 +203,15 @@ We can tunnel into the cluster using `kubectl port-forward` to check if our Pod 
 kubectl port-forward deployment/example-myapp 8080:80
 ```
 
-this will tunnel http://localhost:8080 -> into the cluster -> pod ... so you can use a browser to check it's returning the "welcome to nginx" default page
+This will tunnel http://localhost:8080 -> into the cluster -> pod ... so you can use a browser to check it's returning the "welcome to nginx" default page
 
-tunnelling into the cluster isn't a very practical way to expose your service so let's improve that.
+### Creating a service
+
+Tunnelling into the cluster isn't a very practical way to expose your service so let's improve that.
 
 The first thing we need to do is add a `Service` definition to our Chart.
 
-create a `templates/service.yaml` file like:
+Create a `templates/service.yaml` file like:
 
 ```
 apiVersion: v1
@@ -248,6 +253,8 @@ As before we can use `kubectl port-forward` to tunnel this time to the `Service`
 kubectl port-forward service/example-myapp 8080:80
 ```
 
+### Creatijng an Ingress to expose the service
+
 This still hasn't helped us expose our app to the public, but has given us a stable endpoint to direct traffic to
 
 To route traffic from the public we need to define an `Ingress` record.
@@ -284,7 +291,7 @@ Check the ingress is created:
 kubectl get ingress
 ```
 
-which should show something like:
+Which should show something like:
 
 ```
 kubectl get ingress
@@ -292,16 +299,16 @@ NAME            HOSTS           ADDRESS     PORTS   AGE
 example-myapp   www.myapp.com   10.0.2.15   80      3m31s
 ```
 
-Our ingress route should now be working and routing traffic for the `www.myapp.com` host from the exposed minikube IP to our Service and on to our Pods running nginx... we can test this using curl:
+Our ingress route should now be working and routing traffic for the `www.myapp.com` host from the exposed Minikube IP to our Service and on to our Pods running nginx... we can test this using curl:
 
 ```
 curl -k -H 'Host: www.myapp.com' http://$(minikube ip)/
 ```
 
-The `minikube ip` command will return the IP address of the minikube virtual machine, which is the ingress point. We add a `Host: www.myapp.com` header to the request so that our request is correctly routed.
+The `minikube ip` command will return the IP address of the Minikube virtual machine, which is the ingress point. We add a `Host: www.myapp.com` header to the request so that our request is correctly routed.
 
 
-which should show the "Thank you for using nginx" message!
+Which should show the "Thank you for using nginx" message!
 
 ```
 <!DOCTYPE html>
@@ -332,6 +339,7 @@ Commercial support is available at
 
 ```
 
+### Check your application log files
 You can check the logs of your application using
 
 ```
@@ -345,6 +353,8 @@ The `-f` switch steams updates from the log as they happen and the pod name is t
 172.17.0.2 - - [10/Jan/2019:11:12:44 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.54.0" "192.168.99.1"
 172.17.0.2 - - [10/Jan/2019:11:13:03 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.54.0" "192.168.99.1"
 ```
+
+### Scaling the appliction
 
 Now lets scale our deployment up to ten nginx instances. We can override the replicas setting during the templating as folllows:
 
@@ -468,6 +478,8 @@ example-myapp-768cd7d675-qw4lj   1/1     Running   0          5m14s
 example-myapp-768cd7d675-tvvwq   1/1     Running   0          5m14s
 ```
 
+### Uninstall the application and Kubernetes cluster
+
 Finally we can remove our deployment, the instances, the service and the ingress
 
 ```
@@ -488,13 +500,13 @@ which confirms that its all gone
 No resources found.
 ```
 
-Finally we can stop minikube
+Finally we can stop Minikube
 
 ```
 minikube stop
 ```
 
-and if required remove all the sofware
+If required we can remove all the software
 
 ```
 brew cask uninstall virtualbox
@@ -507,15 +519,15 @@ brew uninstall jq
 DONE
 
 ---
-### References
+## References
 
 |Topic|Description|
 |----|-----------|
-|[helm](https://docs.helm.sh/)| helm package manager for kubernetes|
+|[helm](https://docs.helm.sh/)| Helm package manager for Kubernetes|
 |[jq](https://stedolan.github.io/jq/manual/)| json wrangling filter |
-|[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)| kubernetes command line tool|
-|[kubernetes](https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational)| k8s |
-|[kuberetes cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-kubernetes-A4)|Handy kubernets cheatsheet|
-|[minikube](https://github.com/kubernetes/minikube)|local kubernetes |
-|[minikube cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-A4)|Handy cheatsheet for minikube|
+|[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)| Kubernetes command line tool|
+|[kubernetes](https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational)| Kubernetes |
+|[kubernetes cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-kubernetes-A4)|Handy Kubernetes cheatsheet|
+|[minikube](https://github.com/kubernetes/minikube)|local Kubernetes |
+|[minikube cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-A4)|Handy cheatsheet for Minikube|
 |[virtualbox](https://www.virtualbox.org/manual/UserManual.html)|hypervisor
