@@ -2,21 +2,26 @@
 
 ## Overview
 
-A hands on introduction to the fundamental [Kubernetes concepts](https://kubernetes.io/docs/concepts/) that underpin the GDS Supported Platform.
+A practical introduction to the [Kubernetes concepts](https://kubernetes.io/docs/concepts/) used by the GDS Supported Platform using [Minikube](https://github.com/kubernetes/minikube).
+
+Concepts include [Helm Charts](https://docs.helm.sh/developing_charts/), [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/), [Services](https://kubernetes.io/docs/concepts/services-networking/service/) and [Ingresses](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+
+
+## Exercise
+Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple "hello world" application based on nginx that can be deployed to a local Kubernetes cluster.
 
 This exercise will take between 30-60 minutes and will cover:
 
-* How to setup [Minikube](https://github.com/kubernetes/minikube) for a local [Kubernetes](https://kubernetes.io/) cluster.
-* Describing a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) to run multiple instances of Pods for a hello world app
-* Describing a [Service](https://kubernetes.io/docs/concepts/services-networking/service/) to route traffic to Pods inside the cluster
-* Describing an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) to route traffic to a Service from outside the cluster
-* Introduction to defining a [Helm chart](https://docs.helm.sh/developing_charts/) to package up all of the above
+*  [Setting up a local Kubernetes cluster using Minikube](setting-up-a-local- kubernetes-cluster-using-minikube)
+*  [Creating a Deployment](creating-a-deployment)
+*  [Creating a Service](creating-a-service)
+*  [Creating an Ingress](creating-an-ingress)
+*  [Check your Application log files](check-your-application-log-files)
+*  [Scaling the Application](scaling-the-application)
+*  [Uninstalling the Application and Kubernetes cluster](Uninstalling the Application and Kubernetes cluster)
 
-## Exercise
 
-Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple hello world application based on nginx that can be deployed to a Kubernetes cluster.
-
-### Set up a local Kubernetes cluster using Minikube
+### Setting up a local Kubernetes cluster using Minikube
 
 Install [Homebrew](https://brew.sh/) (if required) to install dependencies.
 
@@ -63,7 +68,7 @@ minikube dashboard            # launch dashboad in default browser
 
 ![A screenshot of the Kubernetes dashboard](kubernetes-dashboard.png)
 
-### Creating an initial deployment
+### Creating a Deployment
 
 Create a directory that will contain our "Chart" (a collection of Kubernetes resources)
 
@@ -205,7 +210,7 @@ kubectl port-forward deployment/example-myapp 8080:80
 
 This will tunnel http://localhost:8080 -> into the cluster -> pod ... so you can use a browser to check it's returning the "welcome to nginx" default page
 
-### Creating a service
+### Creating a Service
 
 Tunnelling into the cluster isn't a very practical way to expose your service so let's improve that.
 
@@ -253,7 +258,7 @@ As before we can use `kubectl port-forward` to tunnel this time to the `Service`
 kubectl port-forward service/example-myapp 8080:80
 ```
 
-### Creatijng an Ingress to expose the service
+### Creating an Ingress
 
 This still hasn't helped us expose our app to the public, but has given us a stable endpoint to direct traffic to
 
@@ -339,7 +344,7 @@ Commercial support is available at
 
 ```
 
-### Check your application log files
+### Check your Application log files
 You can check the logs of your application using
 
 ```
@@ -354,7 +359,7 @@ The `-f` switch steams updates from the log as they happen and the pod name is t
 172.17.0.2 - - [10/Jan/2019:11:13:03 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.54.0" "192.168.99.1"
 ```
 
-### Scaling the appliction
+### Scaling the Application
 
 Now lets scale our deployment up to ten nginx instances. We can override the replicas setting during the templating as folllows:
 
@@ -478,7 +483,7 @@ example-myapp-768cd7d675-qw4lj   1/1     Running   0          5m14s
 example-myapp-768cd7d675-tvvwq   1/1     Running   0          5m14s
 ```
 
-### Uninstall the application and Kubernetes cluster
+### Uninstalling the Application and Kubernetes cluster
 
 Finally we can remove our deployment, the instances, the service and the ingress
 
