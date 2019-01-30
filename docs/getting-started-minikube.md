@@ -12,13 +12,13 @@ Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple "hel
 
 This exercise will take between 30-60 minutes and will cover:
 
-*  [Setting up a local Kubernetes cluster using Minikube](setting-up-a-local-kubernetes-cluster-using-minikube)
-*  [Creating a Deployment](creating-a-deployment)
-*  [Creating a Service](creating-a-service)
-*  [Creating an Ingress](creating-an-ingress)
-*  [Check your Application log files](check-your-application-log-files)
-*  [Scaling the Application](scaling-the-application)
-*  [Uninstalling the Application and Kubernetes cluster](uninstalling-the-application-and-kubernetes-cluster)
+*  [Setting up a local Kubernetes cluster using Minikube](#setting-up-a-local-kubernetes-cluster-using-minikube)
+*  [Creating a Deployment](#creating-a-deployment)
+*  [Creating a Service](#creating-a-service)
+*  [Creating an Ingress](#creating-an-ingress)
+*  [Check your Application log files](#check-your-application-log-files)
+*  [Scaling the Application](#scaling-the-application)
+*  [Uninstalling the Application and Kubernetes cluster](#uninstalling-the-application-and-kubernetes-cluster)
 
 
 ### Setting up a local Kubernetes cluster using Minikube
