@@ -14,7 +14,7 @@ This exercise will take between 30-60mins and will cover:
 
 ### Exercise
 
-* Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple hello world application based on nginx that can be deployed to a kubernetes cluster. 
+* Create a [Helm chart](https://docs.helm.sh/developing_charts/) for a simple hello world application based on nginx that can be deployed to a kubernetes cluster.
 
 install [homebrew](https://brew.sh/) (if required) to install dependencies
 
@@ -100,7 +100,7 @@ create an values.yaml file that can be used to set defaults for any variables we
 replicas: 2 	# the number of pods
 ```
 
-This sets the default number of pods to create and is referenced in the deployment template using ``{{ .Values.replicas }}``. 
+This sets the default number of pods to create and is referenced in the deployment template using ``{{ .Values.replicas }}``.
 
 ok, we now have the boilerplate for an empty "Chart" and can start defining kubernetes resources
 
@@ -140,8 +140,8 @@ spec:
 ```
 
 The `{{ .Release.Name }}` variables will be populated when we "render" the chart.
-The ``{{ .Values.replicas }}`` variable is populated from the contents of the `values.yaml` file. 
- 
+The ``{{ .Values.replicas }}`` variable is populated from the contents of the `values.yaml` file.
+
 Test out rendering the chart using the `helm template` command like:
 
 ```
@@ -178,7 +178,7 @@ The Deployment will manage the creation of Pods for our app image
 To check the state of pods do
 
 ```
-kubectl get pods 
+kubectl get pods
 ```
 
 
@@ -204,7 +204,7 @@ this will tunnel http://localhost:8080 -> into the cluster -> pod ... so you can
 
 tunnelling into the cluster isn't a very practical way to expose your service so let's improve that.
 
-The first thing we need to do is add a `Service` definition to our Chart. 
+The first thing we need to do is add a `Service` definition to our Chart.
 
 create a `templates/service.yaml` file like:
 
@@ -488,16 +488,16 @@ which confirms that its all gone
 No resources found.
 ```
 
-Finally we can stop minikube 
+Finally we can stop minikube
 
 ```
 minikube stop
 ```
 
-and if required remove all the sofware 
+and if required remove all the sofware
 
 ```
-brew cask uninstall virtualbox 
+brew cask uninstall virtualbox
 brew cask uninstall minikube
 brew uninstall kubernetes-cli
 brew uninstall kubernetes-helm
@@ -511,9 +511,11 @@ DONE
 
 |Topic|Description|
 |----|-----------|
-|[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)| kubernetes command line tool|
-|[kubernetes](https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational)| k8s |
 |[helm](https://docs.helm.sh/)| helm package manager for kubernetes|
 |[jq](https://stedolan.github.io/jq/manual/)| json wrangling filter |
+|[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)| kubernetes command line tool|
+|[kubernetes](https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational)| k8s |
+|[kuberetes cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-kubernetes-A4)|Handy kubernets cheatsheet|
 |[minikube](https://github.com/kubernetes/minikube)|local kubernetes |
-|[virtualbox](https://www.virtualbox.org/manual/UserManual.html)|hypervisor 
+|[minikube cheatsheet](https://cheatsheet.dennyzhang.com/cheatsheet-minikube-A4)|Handy cheatsheet for minikube|
+|[virtualbox](https://www.virtualbox.org/manual/UserManual.html)|hypervisor
